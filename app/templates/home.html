@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<section class="bg-gradient-to-br from-slate-50 to-blue-50">
+  <div class="max-w-5xl mx-auto px-6 py-20 text-center">
+    <div class="inline-flex items-center gap-3 mb-6">
+      <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center text-white font-bold text-3xl shadow-lg">L</div>
+      <h1 class="text-5xl font-extrabold text-slate-900">Libretas<span class="text-blue-700">.py</span></h1>
+    </div>
+    <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+      Sistema web de gestion de libretas de calificaciones para Nivel Primario, integrado con Moodle.
+    </p>
+    <div class="mt-6 inline-block bg-white px-4 py-2 rounded-full border border-slate-200 text-sm text-slate-600 shadow-sm">
+      {{ AUTOR.materia }} · {{ AUTOR.carrera }} · {{ AUTOR.anio }}
+    </div>
+
+    <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a href="/cursos" class="px-5 py-3 bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-lg shadow-sm">
+        Ver cursos del ciclo
+      </a>
+      <a href="/acerca" class="px-5 py-3 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium rounded-lg">
+        Conocer el proyecto
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="max-w-5xl mx-auto px-6 py-16">
+  <h2 class="text-2xl font-bold text-slate-900 mb-6 text-center">Que hace el sistema</h2>
+
+  <div class="grid md:grid-cols-3 gap-6">
+    <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+      <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center text-2xl mb-3">1</div>
+      <h3 class="text-lg font-semibold text-slate-900 mb-2">Lee calificaciones de Moodle</h3>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        Se conecta de manera solo lectura a una instalacion Moodle y obtiene las calificaciones numericas que los docentes ya cargaron.
+      </p>
+    </article>
+
+    <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+      <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center text-2xl mb-3">2</div>
+      <h3 class="text-lg font-semibold text-slate-900 mb-2">Mapea a escala cualitativa</h3>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        Convierte automaticamente las notas al formato oficial de la provincia: LA / L / EP / NL para primer ciclo, S / MB / B / R para segundo y tercer ciclo.
+      </p>
+    </article>
+
+    <article class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+      <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-lg flex items-center justify-center text-2xl mb-3">3</div>
+      <h3 class="text-lg font-semibold text-slate-900 mb-2">Genera la libreta en PDF</h3>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        Produce libretas oficiales en PDF, individuales o por curso completo, listas para imprimir o entregar digitalmente.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="bg-white border-t border-slate-200">
+  <div class="max-w-5xl mx-auto px-6 py-12 text-center">
+    <h2 class="text-xl font-semibold text-slate-900 mb-2">Marco normativo</h2>
+    <p class="text-sm text-slate-600 max-w-2xl mx-auto">
+      Disenio el sistema respetando la Ley 11.723 (Propiedad Intelectual), la Ley 25.326 (Proteccion de Datos Personales), la Ley 26.061 (Proteccion Integral de NNyA) y el Regimen Academico de Nivel Primario de la provincia de San Juan.
+    </p>
+  </div>
+</section>
+{% endblock %}
