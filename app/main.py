@@ -3,8 +3,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.config import AUTOR, INSTITUCION, STATIC_DIR, TEMPLATES_DIR
-from app.routers import public
+from app.database import Base, engine
+from app.routers import cursos, public
 
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Libretas.py")
 
@@ -15,5 +18,7 @@ templates.env.globals["AUTOR"] = AUTOR
 templates.env.globals["INSTITUCION"] = INSTITUCION
 
 public.templates = templates
+cursos.templates = templates
 
 app.include_router(public.router)
+app.include_router(cursos.router)
