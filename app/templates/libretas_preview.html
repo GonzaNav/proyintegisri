@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+{% block title %}Libreta {{ alumno.apellido }} {{ alumno.nombre }}{% endblock %}
+
+{% block content %}
+<style>
+  @page { size: legal landscape; margin-top: 0.5cm; margin-bottom: 0cm; }
+
+  .libreta-doc, .libreta-doc * {
+    font-family: Nunito, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    box-sizing: border-box;
+  }
+  .libreta-doc {
+    background: #fff;
+    color: #000;
+    padding: 0.5cm 1cm;
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+  .libreta-doc p { margin: 0; }
+
+  .lb-frase {
+    text-align: center;
+    font-style: italic;
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .lb-encabezado {
+    display: table;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+  .lb-encabezado-row { display: table-row; }
+  .lb-encabezado-cell {
+    display: table-cell;
+    width: 33%;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .lb-gob {
+    text-transform: uppercase;
+    font-size: 9px;
+    line-height: 1.25;
+    margin: 0;
+  }
+  .lb-titulo { font-size: 14px; margin: 0; }
+  .lb-institucion {
+    font-size: 15px;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin: 0;
+  }
+  .lb-subtitulo { font-size: 11px; margin: 0; }
+  .lb-logo-gob {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #4b4b4b;
+    background: #e7e7e7;
+    font-size: 8px;
+    line-height: 28px;
+    color: #4b4b4b;
+  }
+  .lb-logo-inst {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 1px solid #4b4b4b;
+    background: #f5f5f5;
+    font-size: 9px;
+    line-height: 60px;
+    color: #4b4b4b;
+  }
+
+  .lb-datos {
+    display: table;
+    width: 100%;
+    margin: 8px 0 6px;
+    font-size: 12px;
+  }
+  .lb-datos-row { display: table-row; }
+  .lb-datos-cell {
+    display: table-cell;
+    padding: 2px 4px;
+  }
+
+  .lb-tabla {
+    border-collapse: collapse;
+    table-layout: auto;
+    width: 100%;
+    border: 2px solid #000;
+    margin-top: 4px;
+  }
+  .lb-tabla th, .lb-tabla td {
+    border: 1px solid #4b4b4b;
+    font-size: 0.65rem;
+    padding: 2px 3px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .lb-tabla th { font-weight: bold; }
+  .lb-tabla td.lb-etiqueta {
+    text-align: left;
+    padding-left: 6px;
+    font-weight: normal;
+  }
+
+  .lb-rotado {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    display: inline-block;
+    font-weight: normal;
+    font-size: 9px;
+    line-height: 1;
+    padding: 2px 0;
+  }
+  .lb-th-area {
+    height: 170px;
+    width: 22px;
+    vertical-align: bottom;
+    padding: 4px 1px;
+    text-align: center;
+  }
+
+  .lb-firma-th {
+    width: 110px;
+    font-size: 9px;
+    line-height: 1.1;
+  }
+
+  .lb-leyenda {
+    text-align: right;
+    font-size: 9px;
+    margin: 6px 4px 0 0;
+    color: #1a1a1a;
+  }
+
+  .lb-observ {
+    display: table;
+    width: 100%;
+    margin-top: 8px;
+    font-size: 11px;
+  }
+  .lb-observ > div { display: table-row; }
+  .lb-observ > div > div {
+    display: table-cell;
+    padding: 2px 4px;
+    vertical-align: top;
+  }
+  .lb-observ-label { width: 10%; }
+  .lb-observ-line {
+    border-bottom: 1px dotted #555;
+    padding-bottom: 2px;
+    margin-top: 6px;
+  }
+
+  .lb-firma-pie {
+    margin-top: 18px;
+    text-align: right;
+    font-size: 11px;
+    padding-right: 40px;
+  }
+  .lb-firma-linea {
+    display: inline-block;
+    border-top: 1px solid #000;
+    width: 220px;
+    padding-top: 2px;
+    text-align: center;
+  }
+
+  .no-print { margin-bottom: 12px; }
+  @media print {
+    header, footer, nav, .no-print { display: none !important; }
+    body { background: #fff !important; }
+    .libreta-doc { padding: 0; max-width: 100%; }
+  }
+</style>
+
+<div class="max-w-7xl mx-auto px-6 py-4">
+  <div class="flex items-center justify-between no-print">
+    <nav class="flex items-center gap-2 text-sm">
+      <a href="/dashboard" class="text-slate-500 hover:text-slate-700">Inicio</a>
+      <span class="text-slate-300">›</span>
+      <a href="/libretas" class="text-slate-500 hover:text-slate-700">Generar libreta</a>
+      <span class="text-slate-300">›</span>
+      <span class="text-slate-800 font-medium">Vista previa</span>
+    </nav>
+    <div class="flex items-center gap-2">
+      <a href="/libretas" class="px-3 py-2 text-sm text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg">← Volver</a>
+      <button onclick="window.print()" class="px-3 py-2 text-sm bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-lg shadow-sm">
+        Imprimir / Guardar PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="libreta-doc">
+
+  <p class="lb-frase">"{{ AUTOR.anio }} - Provincia de San Juan"</p>
+
+  <div class="lb-encabezado">
+    <div class="lb-encabezado-row">
+      <div class="lb-encabezado-cell">
+        <span class="lb-logo-gob">GOB</span>
+        <p class="lb-gob">Gobierno de la Provincia</p>
+        <p class="lb-gob">Ministerio de Educación</p>
+        <p class="lb-gob">Dirección de Educación Privada</p>
+        <p class="lb-gob">San Juan</p>
+      </div>
+      <div class="lb-encabezado-cell">
+        {% if datos.primer_ciclo %}
+          <p class="lb-titulo">DUE - Documento Único de Evaluación</p>
+          <p class="lb-subtitulo">Unidad Pedagógica de 1° y 2° Grado</p>
+        {% else %}
+          <p class="lb-institucion">{{ institucion.nombre if institucion else 'Institución Educativa' }}</p>
+          <p class="lb-subtitulo">Ciclo Lectivo {{ AUTOR.anio }}</p>
+        {% endif %}
+      </div>
+      <div class="lb-encabezado-cell">
+        <span class="lb-logo-inst">LOGO</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lb-datos">
+    <div class="lb-datos-row">
+      <div class="lb-datos-cell" style="width:45%;">
+        Alumno: <strong>{{ alumno.apellido }}, {{ alumno.nombre }}</strong>
+      </div>
+      <div class="lb-datos-cell" style="width:20%; text-align:center;">
+        DNI N°: <strong>{{ alumno.legajo }}</strong>
+      </div>
+      <div class="lb-datos-cell" style="width:10%; text-align:center;">
+        Grado: <strong>{{ curso.grado }}</strong>
+      </div>
+      <div class="lb-datos-cell" style="width:10%; text-align:center;">
+        Sección: <strong>{{ curso.seccion }}</strong>
+      </div>
+      <div class="lb-datos-cell" style="width:15%; text-align:center;">
+        Ciclo Lectivo: <strong>{{ AUTOR.anio }}</strong>
+      </div>
+    </div>
+  </div>
+  <p style="text-align:right; font-size:10px; color:#444; margin:0 4px 4px 0;">
+    Período visualizado: <strong>{{ periodo }}</strong>
+  </p>
+
+  {% if datos.primer_ciclo %}
+    {# ============== DUE - 1° y 2° Grado ============== #}
+    <table class="lb-tabla">
+      <thead>
+        <tr style="text-transform: uppercase;">
+          <th style="width:15%; vertical-align:middle;">Áreas Curriculares</th>
+          {% for area in datos.areas %}
+            <th class="lb-th-area"><div class="lb-rotado">{{ area.area }}</div></th>
+          {% endfor %}
+          <th class="lb-th-area"><div class="lb-rotado">Convivencia</div></th>
+          <th class="lb-th-area"><div class="lb-rotado">Asistencias</div></th>
+          <th class="lb-th-area"><div class="lb-rotado">Inasistencias</div></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for idx in range(datos.trimestres|length) %}
+        <tr>
+          <td class="lb-etiqueta">{{ datos.trimestres[idx] }} Trimestre</td>
+          {% for area in datos.areas %}
+            <td>{{ area.trimestres[idx].valor }}</td>
+          {% endfor %}
+          {% for ci in datos.convivencia %}
+            <td>{{ ci.trimestres[idx].valor }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+        <tr>
+          <td class="lb-etiqueta">Información Final de Promoción</td>
+          {% for area in datos.areas %}
+            <td>{{ area.final.valor }}</td>
+          {% endfor %}
+          <td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td class="lb-etiqueta">Fecha</td>
+          {% for area in datos.areas %}
+            <td></td>
+          {% endfor %}
+          <td></td><td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="lb-tabla" style="margin-top:6px;">
+      <tbody>
+        <tr>
+          <td class="lb-etiqueta" style="width:14%;">Firma Docente</td>
+          {% for t in datos.trimestres %}<td>{{ t }} Trim.</td>{% endfor %}
+        </tr>
+        <tr>
+          <td class="lb-etiqueta">Firma Padres / Tutor</td>
+          {% for t in datos.trimestres %}<td>{{ t }} Trim.</td>{% endfor %}
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lb-leyenda">
+      <strong>Valoradores Res. N° 2803-ME-2015:</strong>
+      LA: Logrado con Autonomía (Sobresaliente) — L: Logrado (Muy Bueno) — EP: En Proceso (Bueno) — NL: No Logrado (Regular)
+    </p>
+
+  {% else %}
+    {# ============== Informe - 3° a 6° Grado ============== #}
+    <table class="lb-tabla">
+      <thead>
+        <tr>
+          <th colspan="2" rowspan="2" style="width:10%; vertical-align:middle;">Áreas Curriculares</th>
+          {% for area in datos.areas %}
+            <th rowspan="2" class="lb-th-area"><div class="lb-rotado">{{ area.area }}</div></th>
+          {% endfor %}
+          <th colspan="4">Convivencia</th>
+          <th colspan="3">Inasistencias</th>
+          <th class="lb-firma-th">Maestro</th>
+          <th class="lb-firma-th">Padres</th>
+        </tr>
+        <tr>
+          <th class="lb-th-area"><div class="lb-rotado">Comportamiento</div></th>
+          <th class="lb-th-area"><div class="lb-rotado">Esfuerzo</div></th>
+          <th class="lb-th-area"><div class="lb-rotado">Respeto y Normas</div></th>
+          <th class="lb-th-area"><div class="lb-rotado">Integración Grupal</div></th>
+          <th class="lb-th-area"><div class="lb-rotado">Justificadas</div></th>
+          <th class="lb-th-area"><div class="lb-rotado">Injustificadas</div></th>
+          <th class="lb-th-area"><div class="lb-rotado">Tardanzas</div></th>
+          <th class="lb-firma-th">
+            ____________________<br>Firma<br>____________________<br>Aclaración
+          </th>
+          <th class="lb-firma-th">
+            ____________________<br>Firma<br>____________________<br>Aclaración
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for idx in range(datos.trimestres|length) %}
+        <tr>
+          <td colspan="2" class="lb-etiqueta">{{ datos.trimestres[idx] }} Trimestre</td>
+          {% for area in datos.areas %}
+            <td>{{ area.trimestres[idx].valor }}</td>
+          {% endfor %}
+          {% for ci in datos.convivencia %}
+            <td>{{ ci.trimestres[idx].valor }}</td>
+          {% endfor %}
+          <td></td>
+          <td></td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <td rowspan="2" class="lb-etiqueta">Información Final de Recuperación</td>
+          <td class="lb-etiqueta">Dic.</td>
+          {% for area in datos.areas %}<td></td>{% endfor %}
+          {% for ci in datos.convivencia %}<td></td>{% endfor %}
+          <td rowspan="2" colspan="2" class="lb-etiqueta">Información General:</td>
+        </tr>
+        <tr>
+          <td class="lb-etiqueta">Feb.</td>
+          {% for area in datos.areas %}<td></td>{% endfor %}
+          {% for ci in datos.convivencia %}<td></td>{% endfor %}
+        </tr>
+        <tr>
+          <td colspan="2" class="lb-etiqueta">Información Final</td>
+          {% for area in datos.areas %}
+            <td>{{ area.final.valor }}</td>
+          {% endfor %}
+          {% for ci in datos.convivencia %}<td></td>{% endfor %}
+          <td colspan="2" class="lb-etiqueta">Promedio General:</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lb-leyenda">
+      <strong>Escala de Calificación:</strong> Numérica (1 a 10 puntos). Convivencia y Lectura: Conceptual.
+    </p>
+  {% endif %}
+
+  <div class="lb-observ">
+    <div>
+      <div class="lb-observ-label"><strong>OBSERVACIONES:</strong></div>
+      <div>
+        {% for t in datos.trimestres %}
+          <p class="lb-observ-line">{{ t }} Trimestre: ...........................................................................................................................................................................................</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="lb-firma-pie">
+    <div class="lb-firma-linea">FIRMA DEL DIRECTIVO</div>
+    <p style="margin-top:4px;">San Juan, ______ de ____________________ de {{ AUTOR.anio }}.</p>
+  </div>
+
+</div>
+{% endblock %}

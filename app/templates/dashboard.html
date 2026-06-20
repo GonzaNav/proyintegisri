@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-8">
+
+  {% if flash %}
+    <div class="mb-6 px-4 py-3 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-700">
+      {{ flash }}
+    </div>
+  {% endif %}
+
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Bienvenido, {{ usuario.nombre }}</h1>
+    <p class="text-sm text-slate-500 mt-1">Rol: {{ usuario.rol }}</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-xl border border-slate-200 p-5">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Cursos</span>
+        <div class="w-8 h-8 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center text-sm font-semibold">C</div>
+      </div>
+      <div class="text-3xl font-bold text-slate-900">{{ total_cursos }}</div>
+      <div class="text-xs text-slate-500 mt-1">secciones activas</div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-5">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Alumnos</span>
+        <div class="w-8 h-8 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center text-sm font-semibold">A</div>
+      </div>
+      <div class="text-3xl font-bold text-slate-900">{{ total_alumnos }}</div>
+      <div class="text-xs text-slate-500 mt-1">matriculados</div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-5">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Grados</span>
+        <div class="w-8 h-8 bg-amber-100 text-amber-700 rounded-lg flex items-center justify-center text-sm font-semibold">G</div>
+      </div>
+      <div class="text-3xl font-bold text-slate-900">{{ total_grados }}</div>
+      <div class="text-xs text-slate-500 mt-1">de 1° a 6° (San Juan)</div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-5">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Libretas</span>
+        <div class="w-8 h-8 bg-violet-100 text-violet-700 rounded-lg flex items-center justify-center text-sm font-semibold">L</div>
+      </div>
+      <div class="text-3xl font-bold text-slate-900">{{ total_libretas }}</div>
+      <div class="text-xs text-slate-500 mt-1">generadas hasta hoy</div>
+    </div>
+  </div>
+
+  <h2 class="text-lg font-semibold text-slate-900 mb-4">Accesos rápidos</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <a href="/libretas" class="block bg-white rounded-xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-blue-700 text-white rounded-lg flex items-center justify-center font-semibold">L</div>
+        <div class="font-semibold text-slate-900">Generar libreta</div>
+      </div>
+      <div class="text-sm text-slate-500">Individual, vista previa imprimible.</div>
+    </a>
+
+    <a href="/cursos" class="block bg-white rounded-xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-emerald-700 text-white rounded-lg flex items-center justify-center font-semibold">C</div>
+        <div class="font-semibold text-slate-900">Ver cursos</div>
+      </div>
+      <div class="text-sm text-slate-500">Listado del ciclo lectivo.</div>
+    </a>
+
+    <a href="/admin/usuarios" class="block bg-white rounded-xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-violet-700 text-white rounded-lg flex items-center justify-center font-semibold">A</div>
+        <div class="font-semibold text-slate-900">Administración</div>
+      </div>
+      <div class="text-sm text-slate-500">Usuarios y datos institucionales.</div>
+    </a>
+
+    <a href="/auditoria" class="block bg-white rounded-xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-md transition">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 bg-slate-800 text-white rounded-lg flex items-center justify-center font-semibold">.</div>
+        <div class="font-semibold text-slate-900">Auditoría</div>
+      </div>
+      <div class="text-sm text-slate-500">Eventos del sistema.</div>
+    </a>
+  </div>
+
+</div>
+{% endblock %}

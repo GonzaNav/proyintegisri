@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Institución{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-6 py-8">
+
+  {% if flash %}
+    <div class="mb-6 px-4 py-3 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-700">{{ flash }}</div>
+  {% endif %}
+
+  <nav class="flex items-center gap-2 text-sm mb-3">
+    <a href="/dashboard" class="text-slate-500 hover:text-slate-700">Inicio</a>
+    <span class="text-slate-300">›</span>
+    <a href="/admin/usuarios" class="text-slate-500 hover:text-slate-700">Admin</a>
+    <span class="text-slate-300">›</span>
+    <span class="text-slate-800 font-medium">Institución</span>
+  </nav>
+
+  <h1 class="text-2xl font-bold text-slate-900 mb-1">Datos institucionales</h1>
+  <p class="text-sm text-slate-500 mb-6">Estos datos se imprimen en el encabezado de cada libreta generada.</p>
+
+  <form method="post" action="/admin/institucion" class="space-y-5">
+
+    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+      <h2 class="text-base font-semibold text-slate-900 mb-4">Identificación</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-slate-700 mb-1" for="nombre">Nombre de la institución</label>
+          <input type="text" name="nombre" id="nombre" required value="{{ institucion.nombre if institucion else '' }}"
+                 class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1" for="cue">CUE</label>
+          <input type="text" name="cue" id="cue" value="{{ institucion.cue if institucion else '' }}"
+                 class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1" for="cuit">CUIT</label>
+          <input type="text" name="cuit" id="cuit" value="{{ institucion.cuit if institucion else '' }}"
+                 class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none">
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+      <h2 class="text-base font-semibold text-slate-900 mb-4">Equipo directivo</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1" for="director">Director/a</label>
+          <input type="text" name="director" id="director" value="{{ institucion.director if institucion else '' }}"
+                 class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1" for="vicedirector">Vicedirector/a</label>
+          <input type="text" name="vicedirector" id="vicedirector" value="{{ institucion.vicedirector if institucion else '' }}"
+                 class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-slate-700 mb-1" for="secretario">Secretario/a</label>
+          <input type="text" name="secretario" id="secretario" value="{{ institucion.secretario if institucion else '' }}"
+                 class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none">
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+      <h2 class="text-base font-semibold text-slate-900 mb-4">Dirección física</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-slate-700 mb-1" for="calle">Calle</label>
+          <input type="text" name="calle" id="calle" value="{{ institucion.calle if institucion else '' }}"
+                 class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1" for="numero">Número</label>
+          <input type="text" name="numero" id="numero" value="{{ institucion.numero if institucion else '' }}"
+                 class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1" for="localidad">Localidad</label>
+          <input type="text" name="localidad" id="localidad" value="{{ institucion.localidad if institucion else '' }}"
+                 class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-slate-700 mb-1" for="provincia">Provincia</label>
+          <input type="text" name="provincia" id="provincia" value="{{ institucion.provincia if institucion else '' }}"
+                 class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none">
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-3">
+      <a href="/admin/usuarios" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</a>
+      <button type="submit" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium rounded-lg shadow-sm">
+        Guardar cambios
+      </button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}

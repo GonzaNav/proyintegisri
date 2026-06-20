@@ -1,0 +1,41 @@
+<header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
+    <a href="/" class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">L</div>
+      <span class="font-bold text-slate-800 text-lg">Libretas<span class="text-blue-700">.py</span></span>
+    </a>
+
+    {% if request.session.get("usuario_nombre") %}
+    <nav class="hidden md:flex items-center gap-7 text-sm">
+      {% set links = [
+        ("dashboard", "/dashboard",         "Dashboard"),
+        ("cursos",    "/cursos",            "Cursos"),
+        ("libretas",  "/libretas",          "Libretas"),
+        ("admin",     "/admin/usuarios",    "Admin"),
+        ("auditoria", "/auditoria",         "Auditoría")
+      ] %}
+      {% for clave, url, etiqueta in links %}
+        {% if ruta_activa == clave %}
+          <a href="{{ url }}" class="text-blue-700 font-semibold border-b-2 border-blue-700 pb-1">{{ etiqueta }}</a>
+        {% else %}
+          <a href="{{ url }}" class="text-slate-600 hover:text-slate-900 pb-1">{{ etiqueta }}</a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+    {% endif %}
+
+    {% if request.session.get("usuario_nombre") %}
+      <div class="flex items-center gap-3">
+        <a href="/dashboard" class="text-right hidden sm:block">
+          <div class="text-sm font-medium text-slate-800">{{ request.session.get("usuario_nombre") }}</div>
+          <div class="text-xs text-slate-500">{{ request.session.get("usuario_rol") }}</div>
+        </a>
+        <a href="/logout" class="text-sm px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-100">Cerrar sesión</a>
+      </div>
+    {% else %}
+      <a href="/login" class="text-sm px-3 py-1.5 rounded-md bg-blue-700 hover:bg-blue-800 text-white font-medium">
+        Iniciar sesión
+      </a>
+    {% endif %}
+  </div>
+</header>
