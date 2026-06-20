@@ -84,8 +84,8 @@
             </span>
           </td>
           <td class="px-4 py-3 text-right">
-            <button class="px-2.5 py-1 text-xs text-slate-600 hover:bg-slate-100 rounded">Ver alumnos</button>
-            <button class="px-2.5 py-1 text-xs text-blue-700 hover:bg-blue-50 rounded font-medium">Generar libreta</button>
+            <a href="/cursos/{{ curso.id }}/alumnos" class="px-2.5 py-1 text-xs text-slate-600 hover:bg-slate-100 rounded">Ver alumnos</a>
+            <a href="/libretas?curso_id={{ curso.id }}" class="px-2.5 py-1 text-xs text-blue-700 hover:bg-blue-50 rounded font-medium">Generar libreta</a>
           </td>
         </tr>
         {% else %}

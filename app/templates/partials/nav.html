@@ -5,6 +5,7 @@
       <span class="font-bold text-slate-800 text-lg">Libretas<span class="text-blue-700">.py</span></span>
     </a>
 
+    {% if request.session.get("usuario_nombre") %}
     <nav class="hidden md:flex items-center gap-7 text-sm">
       {% set links = [
         ("dashboard", "/dashboard",         "Dashboard"),
@@ -21,6 +22,7 @@
         {% endif %}
       {% endfor %}
     </nav>
+    {% endif %}
 
     {% if request.session.get("usuario_nombre") %}
       <div class="flex items-center gap-3">
