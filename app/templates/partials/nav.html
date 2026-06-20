@@ -4,10 +4,14 @@
       <div class="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">L</div>
       <span class="font-bold text-slate-800 text-lg">Libretas<span class="text-blue-700">.py</span></span>
     </a>
+
     <nav class="hidden md:flex items-center gap-7 text-sm">
       {% set links = [
-        ("dashboard", "/dashboard", "Dashboard"),
-        ("cursos",    "/cursos",    "Cursos"),
+        ("dashboard", "/dashboard",         "Dashboard"),
+        ("cursos",    "/cursos",            "Cursos"),
+        ("libretas",  "/libretas",          "Libretas"),
+        ("admin",     "/admin/usuarios",    "Admin"),
+        ("auditoria", "/auditoria",         "Auditoría")
       ] %}
       {% for clave, url, etiqueta in links %}
         {% if ruta_activa == clave %}
@@ -17,6 +21,7 @@
         {% endif %}
       {% endfor %}
     </nav>
+
     {% if request.session.get("usuario_nombre") %}
       <div class="flex items-center gap-3">
         <a href="/dashboard" class="text-right hidden sm:block">

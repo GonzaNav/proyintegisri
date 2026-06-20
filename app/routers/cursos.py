@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_db, requiere_login
-from app.models import Curso, Usuario
+from app.models import Curso, EventoAuditoria, Usuario
 
 
 router = APIRouter()
@@ -39,6 +39,9 @@ def dashboard(
     cursos = db.query(Curso).all()
     grados = sorted({c.grado for c in cursos})
     total_alumnos = sum(c.cantidad_alumnos for c in cursos)
+    total_libretas = db.query(EventoAuditoria).filter(
+        EventoAuditoria.accion == "Libreta generada"
+    ).count()
     flash = request.session.pop("flash", None)
 
     return templates.TemplateResponse(
@@ -51,6 +54,7 @@ def dashboard(
             "total_cursos": len(cursos),
             "total_alumnos": total_alumnos,
             "total_grados": len(grados),
+            "total_libretas": total_libretas,
             "flash": flash,
         },
     )

@@ -7,7 +7,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.config import AUTOR, INSTITUCION, SECRET_KEY, STATIC_DIR, TEMPLATES_DIR
 from app.database import Base, engine
 from app.dependencies import RedirectException
-from app.routers import auth, cursos, public
+from app.routers import admin, auditoria, auth, cursos, libretas, public
 
 
 Base.metadata.create_all(bind=engine)
@@ -21,13 +21,9 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 templates.env.globals["AUTOR"] = AUTOR
 templates.env.globals["INSTITUCION"] = INSTITUCION
 
-public.templates = templates
-cursos.templates = templates
-auth.templates = templates
-
-app.include_router(public.router)
-app.include_router(cursos.router)
-app.include_router(auth.router)
+for modulo in (public, cursos, auth, admin, libretas, auditoria):
+    modulo.templates = templates
+    app.include_router(modulo.router)
 
 
 @app.exception_handler(RedirectException)
