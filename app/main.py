@@ -1,15 +1,19 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.middleware.sessions import SessionMiddleware
 
-from app.config import AUTOR, INSTITUCION, STATIC_DIR, TEMPLATES_DIR
+from app.config import AUTOR, INSTITUCION, SECRET_KEY, STATIC_DIR, TEMPLATES_DIR
 from app.database import Base, engine
-from app.routers import cursos, public
+from app.dependencies import RedirectException
+from app.routers import auth, cursos, public
 
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Libretas.py")
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
@@ -19,6 +23,13 @@ templates.env.globals["INSTITUCION"] = INSTITUCION
 
 public.templates = templates
 cursos.templates = templates
+auth.templates = templates
 
 app.include_router(public.router)
 app.include_router(cursos.router)
+app.include_router(auth.router)
+
+
+@app.exception_handler(RedirectException)
+async def _redirect_handler(request: Request, exc: RedirectException):
+    return RedirectResponse(exc.url, status_code=303)
