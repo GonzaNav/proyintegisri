@@ -1,37 +1,128 @@
 import random
 
 from fastapi import APIRouter, Depends, Form, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_db, requiere_login
 from app.models import Alumno, Curso, Institucion, Usuario
 from app.utils import auditoria
-from app.utils.escala import a_cualitativa, color_cualitativa
+from app.utils.escala import (
+    calificar_area,
+    calificar_convivencia,
+    calificar_inasistencia,
+    color,
+    es_primer_ciclo,
+)
 
 
 router = APIRouter(prefix="/libretas")
 templates = None
 
 
-ESPACIOS = ["Matemática", "Lengua", "Ciencias Sociales", "Ciencias Naturales", "Educación Física"]
-EVALUACIONES = ["E1", "E2", "E3", "E4", "Final"]
+# Espacios curriculares por ciclo
+AREAS_PRIMER_CICLO = [
+    "Lengua",
+    "Matemática",
+    "Ambiente Social y Natural",
+    "Educación Física",
+    "Educación Artística",
+]
+
+AREAS_SEGUNDO_CICLO = [
+    "Lengua",
+    "Lectura",
+    "Matemática",
+    "Ciencias Sociales",
+    "Ciencias Naturales",
+    "Educación Física",
+    "Educación Artística",
+    "Educación Tecnológica",
+]
+
+TRIMESTRES = ["1°T", "2°T", "3°T"]
 PERIODOS = ["Primer trimestre", "Segundo trimestre", "Tercer trimestre", "Calificación final"]
 
 
-def generar_calificaciones(alumno: Alumno, grado: str):
-    random.seed(alumno.id)
-    filas = []
-    for espacio in ESPACIOS:
-        notas = []
-        for _ in EVALUACIONES[:-1]:
-            valor = random.choice([6, 7, 7, 8, 8, 8, 9, 9, 10])
-            notas.append(valor)
-        promedio = round(sum(notas) / len(notas))
-        notas.append(promedio)
-        cualitativas = [(n, a_cualitativa(n, grado)) for n in notas]
-        filas.append((espacio, cualitativas))
-    return filas
+def _nota_simulada(rnd: random.Random, base: int = 7) -> int:
+    """Genera una nota numerica simulada entre 6 y 10."""
+    return rnd.choice([base, base, base + 1, base + 1, base + 1, base + 2, base + 2, base + 3])
+
+
+def construir_datos_libreta(alumno: Alumno, curso: Curso):
+    """Genera los datos de la libreta segun el ciclo (1°-2° o 3°-6°).
+
+    Devuelve un dict con la estructura necesaria para el template, sin
+    persistir nada. Los datos son consistentes para el mismo alumno (semilla
+    fija sobre alumno.id).
+    """
+    rnd = random.Random(alumno.id)
+    primer_ciclo = es_primer_ciclo(curso.grado)
+    areas = AREAS_PRIMER_CICLO if primer_ciclo else AREAS_SEGUNDO_CICLO
+
+    # Notas por area y trimestre
+    notas_areas = []
+    for area in areas:
+        trimestrales = []
+        for _ in TRIMESTRES:
+            nota = _nota_simulada(rnd)
+            valor = calificar_area(nota, curso.grado, area)
+            trimestrales.append({"nota": nota, "valor": valor, "color": color(valor)})
+        # Promedio anual
+        prom = round(sum(t["nota"] for t in trimestrales) / 3)
+        final_valor = calificar_area(prom, curso.grado, area)
+        notas_areas.append({
+            "area": area,
+            "trimestres": trimestrales,
+            "final": {"nota": prom, "valor": final_valor, "color": color(final_valor)},
+        })
+
+    # Items de convivencia / asistencia por trimestre
+    if primer_ciclo:
+        # 1° ciclo: Convivencia (C), Asistencias (P), Inasistencias (I)
+        convivencia_items = [
+            ("Convivencia", "C", calificar_convivencia),
+            ("Asistencias", "P", lambda n, g: str(int(n))),
+            ("Inasistencias", "I", lambda n, g: calificar_inasistencia(n)),
+        ]
+    else:
+        # 2° ciclo: Convivencia con 4 dimensiones + Inasistencias detalladas + Tardanzas
+        convivencia_items = [
+            ("Comportamiento", "C", calificar_convivencia),
+            ("Esfuerzo", "E", calificar_convivencia),
+            ("Respeto", "R", calificar_convivencia),
+            ("Integración grupal", "I", calificar_convivencia),
+            ("Inasistencias justificadas", "IJ", lambda n, g: calificar_inasistencia(n)),
+            ("Inasistencias injustificadas", "II", lambda n, g: calificar_inasistencia(n)),
+            ("Tardanzas", "T", lambda n, g: calificar_inasistencia(n)),
+        ]
+
+    convivencia = []
+    for nombre, prefijo, fn in convivencia_items:
+        valores = []
+        for _ in TRIMESTRES:
+            if prefijo in ("I", "IJ", "II", "T"):
+                nota = rnd.choice([0, 0, 1, 1, 2, 3])
+                if callable(fn):
+                    valor = fn(nota, curso.grado)
+                else:
+                    valor = str(int(nota))
+            elif prefijo == "P":
+                nota = rnd.choice([55, 58, 60, 62, 65])
+                valor = str(nota)
+            else:
+                nota = _nota_simulada(rnd, base=7)
+                valor = fn(nota, curso.grado)
+            valores.append({"valor": valor, "color": color(valor)})
+        convivencia.append({"nombre": nombre, "prefijo": prefijo, "trimestres": valores})
+
+    return {
+        "primer_ciclo": primer_ciclo,
+        "ciclo_texto": "Primer Ciclo" if primer_ciclo else "Segundo Ciclo",
+        "areas": notas_areas,
+        "convivencia": convivencia,
+        "trimestres": TRIMESTRES,
+    }
 
 
 @router.get("", response_class=HTMLResponse)
@@ -67,8 +158,7 @@ def preview(
     curso = db.query(Curso).filter(Curso.id == curso_id).first()
     institucion = db.query(Institucion).first()
 
-    filas = generar_calificaciones(alumno, curso.grado)
-    convivencia = a_cualitativa(random.Random(alumno.id + 1000).choice([7, 8, 9, 10]), curso.grado)
+    datos = construir_datos_libreta(alumno, curso)
 
     auditoria.registrar(
         db, request, usuario,
@@ -87,17 +177,12 @@ def preview(
             "curso": curso,
             "institucion": institucion,
             "periodo": periodo,
-            "espacios": ESPACIOS,
-            "evaluaciones": EVALUACIONES,
-            "filas": filas,
-            "convivencia": convivencia,
-            "color_cualitativa": color_cualitativa,
+            "datos": datos,
         },
     )
 
 
 @router.get("/alumnos/{curso_id}")
 def alumnos_por_curso(curso_id: int, db: Session = Depends(get_db)):
-    """Endpoint JSON usado por el form de seleccion para refrescar la lista de alumnos."""
     alumnos = db.query(Alumno).filter(Alumno.curso_id == curso_id).order_by(Alumno.apellido).all()
     return [{"id": a.id, "texto": f"{a.apellido}, {a.nombre} - Legajo {a.legajo}"} for a in alumnos]

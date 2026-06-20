@@ -1,18 +1,30 @@
 {% extends "base.html" %}
-{% block title %}Vista previa de libreta{% endblock %}
+{% block title %}Libreta {{ alumno.apellido }} {{ alumno.nombre }}{% endblock %}
 
 {% block content %}
 <style>
+  @page { size: legal landscape; margin: 1cm; }
   @media print {
     header, footer, .no-print { display: none !important; }
-    .libreta { box-shadow: none !important; border: none !important; }
+    .libreta { box-shadow: none !important; border: none !important; max-width: 100% !important; }
     body { background: white !important; }
+    table { font-size: 10px; }
+    th, td { padding: 3px 4px !important; }
+  }
+  .badge {
+    display: inline-block;
+    min-width: 1.8rem;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
   }
 </style>
 
-<div class="max-w-5xl mx-auto px-6 py-8">
+<div class="max-w-7xl mx-auto px-6 py-6">
 
-  <div class="flex items-center justify-between mb-6 no-print">
+  <div class="flex items-center justify-between mb-4 no-print">
     <nav class="flex items-center gap-2 text-sm">
       <a href="/dashboard" class="text-slate-500 hover:text-slate-700">Inicio</a>
       <span class="text-slate-300">›</span>
@@ -28,90 +40,145 @@
     </div>
   </div>
 
-  <div class="libreta bg-white rounded-xl border border-slate-200 shadow-md overflow-hidden">
+  <div class="libreta bg-white rounded-lg border border-slate-300 shadow-md overflow-hidden">
 
-    <div class="bg-gradient-to-r from-blue-50 to-slate-50 px-8 py-6 border-b border-slate-200">
+    <!-- Encabezado institucional -->
+    <div class="px-6 py-4 border-b-2 border-slate-700">
+      <div class="text-center text-[10px] uppercase tracking-wider text-slate-500 mb-1">
+        Ciclo lectivo {{ AUTOR.anio }}
+      </div>
       <div class="flex items-start justify-between gap-4">
-        <div>
-          <h1 class="text-xl font-bold text-slate-900 uppercase">{{ institucion.nombre }}</h1>
-          <p class="text-sm text-slate-600">CUE {{ institucion.cue }} · {{ institucion.localidad }}, {{ institucion.provincia }}</p>
-          <p class="text-xs text-slate-500 mt-1">{{ institucion.calle }} {{ institucion.numero }}</p>
+        <div class="text-left flex-1">
+          <div class="text-[10px] uppercase text-slate-500">Gobierno de la Provincia de San Juan</div>
+          <div class="text-[10px] uppercase text-slate-500">Ministerio de Educación</div>
         </div>
-        <div class="text-right">
-          <div class="text-xs text-slate-500 uppercase tracking-wider">Ciclo</div>
-          <div class="text-2xl font-bold text-slate-900">{{ AUTOR.anio }}</div>
+        <div class="flex-1 text-center">
+          {% if datos.primer_ciclo %}
+            <h1 class="text-base font-bold text-slate-900 uppercase">D.U.E. — Documento Único de Evaluación</h1>
+            <p class="text-xs text-slate-600 uppercase">Unidad Pedagógica de 1° y 2° Grado</p>
+          {% else %}
+            <h1 class="text-base font-bold text-slate-900 uppercase">Informe de Evaluación</h1>
+            <p class="text-xs text-slate-600 uppercase">Nivel Primario — Segundo Ciclo</p>
+          {% endif %}
+        </div>
+        <div class="text-right flex-1 text-xs">
+          <div class="font-bold text-slate-900">{{ institucion.nombre }}</div>
+          <div class="text-[11px] text-slate-600">CUE {{ institucion.cue }}</div>
+          <div class="text-[11px] text-slate-600">{{ institucion.localidad }}, {{ institucion.provincia }}</div>
         </div>
       </div>
     </div>
 
-    <div class="px-8 py-6">
-      <h2 class="text-base font-semibold text-slate-900 uppercase tracking-wide mb-4 pb-2 border-b border-slate-200">
-        Libreta de calificaciones
+    <!-- Datos del alumno -->
+    <div class="px-6 py-3 bg-slate-50 grid grid-cols-2 md:grid-cols-4 gap-y-1 gap-x-4 text-xs border-b border-slate-200">
+      <div><span class="text-slate-500">Alumno/a:</span> <span class="font-semibold">{{ alumno.apellido }}, {{ alumno.nombre }}</span></div>
+      <div><span class="text-slate-500">Legajo:</span> <span class="font-semibold">{{ alumno.legajo }}</span></div>
+      <div><span class="text-slate-500">Grado:</span> <span class="font-semibold">{{ curso.grado }}</span></div>
+      <div><span class="text-slate-500">Sección:</span> <span class="font-semibold">{{ curso.seccion }}</span></div>
+      <div><span class="text-slate-500">Docente a cargo:</span> <span class="font-semibold">{{ curso.docente }}</span></div>
+      <div><span class="text-slate-500">Ciclo:</span> <span class="font-semibold">{{ datos.ciclo_texto }}</span></div>
+      <div><span class="text-slate-500">Período:</span> <span class="font-semibold">{{ periodo }}</span></div>
+      <div><span class="text-slate-500">Fecha:</span> <span class="font-semibold">{{ AUTOR.anio }}</span></div>
+    </div>
+
+    <!-- Tabla principal de areas curriculares -->
+    <div class="px-6 py-4">
+      <h2 class="text-xs font-bold text-slate-700 uppercase mb-2 border-b border-slate-300 pb-1">
+        Áreas curriculares
       </h2>
-
-      <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
-        <div><span class="text-slate-500">Alumno:</span> <span class="font-semibold text-slate-900 ml-1">{{ alumno.apellido }}, {{ alumno.nombre }}</span></div>
-        <div><span class="text-slate-500">Legajo:</span> <span class="font-semibold text-slate-900 ml-1">{{ alumno.legajo }}</span></div>
-        <div><span class="text-slate-500">Grado:</span> <span class="font-semibold text-slate-900 ml-1">{{ curso.grado }} {{ curso.seccion }}</span></div>
-        <div><span class="text-slate-500">Período:</span> <span class="font-semibold text-slate-900 ml-1">{{ periodo }}</span></div>
-      </div>
-
-      <table class="w-full border border-slate-200 rounded-lg overflow-hidden">
-        <thead class="bg-slate-50">
+      <table class="w-full border border-slate-300 text-xs">
+        <thead class="bg-slate-100">
           <tr>
-            <th class="px-3 py-2.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Espacio curricular</th>
-            {% for e in evaluaciones %}
-              <th class="px-3 py-2.5 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">{{ e }}</th>
+            <th class="px-2 py-1.5 text-left font-semibold text-slate-700 border-r border-slate-300">Área</th>
+            {% for t in datos.trimestres %}
+              <th class="px-2 py-1.5 text-center font-semibold text-slate-700 border-r border-slate-300">{{ t }}</th>
+            {% endfor %}
+            <th class="px-2 py-1.5 text-center font-semibold text-slate-700">Final</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fila in datos.areas %}
+          <tr class="border-t border-slate-200">
+            <td class="px-2 py-1.5 font-medium text-slate-800 border-r border-slate-200">{{ fila.area }}</td>
+            {% for t in fila.trimestres %}
+              <td class="px-2 py-1.5 text-center border-r border-slate-200">
+                <span class="badge {{ t.color }}">{{ t.valor }}</span>
+              </td>
+            {% endfor %}
+            <td class="px-2 py-1.5 text-center font-semibold">
+              <span class="badge {{ fila.final.color }}">{{ fila.final.valor }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Convivencia / asistencia -->
+    <div class="px-6 pb-4">
+      <h2 class="text-xs font-bold text-slate-700 uppercase mb-2 border-b border-slate-300 pb-1">
+        {% if datos.primer_ciclo %}Convivencia y asistencia{% else %}Convivencia, asistencia y tardanzas{% endif %}
+      </h2>
+      <table class="w-full border border-slate-300 text-xs">
+        <thead class="bg-slate-100">
+          <tr>
+            <th class="px-2 py-1.5 text-left font-semibold text-slate-700 border-r border-slate-300">Indicador</th>
+            {% for t in datos.trimestres %}
+              <th class="px-2 py-1.5 text-center font-semibold text-slate-700 border-r border-slate-300">{{ t }}</th>
             {% endfor %}
           </tr>
         </thead>
-        <tbody class="bg-white">
-          {% for espacio, cualitativas in filas %}
-          <tr class="border-t border-slate-100">
-            <td class="px-3 py-2.5 text-sm text-slate-700 font-medium">{{ espacio }}</td>
-            {% for nota, cualitativa in cualitativas %}
-              <td class="px-3 py-2 text-center">
-                <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold {{ color_cualitativa(cualitativa) }}">
-                  {{ cualitativa }}
-                </span>
+        <tbody>
+          {% for fila in datos.convivencia %}
+          <tr class="border-t border-slate-200">
+            <td class="px-2 py-1.5 text-slate-800 border-r border-slate-200">
+              <span class="text-slate-400 mr-1">[{{ fila.prefijo }}]</span>{{ fila.nombre }}
+            </td>
+            {% for v in fila.trimestres %}
+              <td class="px-2 py-1.5 text-center border-r border-slate-200">
+                <span class="badge {{ v.color }}">{{ v.valor }}</span>
               </td>
             {% endfor %}
           </tr>
           {% endfor %}
         </tbody>
       </table>
+    </div>
 
-      <div class="grid grid-cols-2 gap-4 mt-6">
-        <div class="bg-slate-50 rounded-lg p-3">
-          <div class="text-xs text-slate-500 uppercase tracking-wider">Convivencia</div>
-          <div class="mt-1">
-            <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold {{ color_cualitativa(convivencia) }}">
-              {{ convivencia }}
-            </span>
-          </div>
-        </div>
-        <div class="bg-slate-50 rounded-lg p-3">
-          <div class="text-xs text-slate-500 uppercase tracking-wider">Observaciones</div>
-          <div class="text-sm text-slate-600 mt-1 italic">Continúa mostrando avances sostenidos.</div>
-        </div>
+    <!-- Observaciones y firmas -->
+    <div class="px-6 pb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="md:col-span-2 border border-slate-300 rounded p-2 min-h-[80px]">
+        <div class="text-[10px] uppercase text-slate-500 mb-1">Observaciones del docente</div>
+        <div class="text-xs italic text-slate-600">Continúa mostrando avances sostenidos durante todo el período evaluado.</div>
       </div>
-
-      <div class="grid grid-cols-2 gap-12 mt-10 pt-4">
-        <div class="border-t-2 border-slate-400 pt-2 text-center">
-          <div class="text-xs text-slate-500">Firma del Directivo ({{ institucion.director }})</div>
-        </div>
-        <div class="border-t-2 border-slate-400 pt-2 text-center">
-          <div class="text-xs text-slate-500">Firma del Responsable</div>
+      <div class="border border-slate-300 rounded p-2">
+        <div class="text-[10px] uppercase text-slate-500 mb-1">Información final</div>
+        <div class="text-xs font-semibold text-slate-800 mt-3">
+          {% if datos.primer_ciclo %}PROMUEVE{% else %}PROMUEVE AL GRADO SIGUIENTE{% endif %}
         </div>
       </div>
     </div>
 
-    <div class="bg-slate-50 px-8 py-3 border-t border-slate-200 text-xs text-slate-500">
-      <strong>Escala</strong>
-      {% if curso.grado in ["1°", "2°"] %}
-        (1° y 2°): LA = Logro Avanzado · L = Logrado · EP = En Proceso · NL = No Logrado
+    <!-- Firmas -->
+    <div class="px-6 pb-6 grid grid-cols-3 gap-12 pt-6">
+      <div class="border-t-2 border-slate-700 pt-1 text-center text-[10px] text-slate-600">
+        Firma Docente<br><span class="text-slate-400">{{ curso.docente }}</span>
+      </div>
+      <div class="border-t-2 border-slate-700 pt-1 text-center text-[10px] text-slate-600">
+        Firma Directivo<br><span class="text-slate-400">{{ institucion.director }}</span>
+      </div>
+      <div class="border-t-2 border-slate-700 pt-1 text-center text-[10px] text-slate-600">
+        Firma Padre / Madre / Tutor
+      </div>
+    </div>
+
+    <!-- Escala -->
+    <div class="bg-slate-50 px-6 py-3 border-t border-slate-300 text-[10px] text-slate-600">
+      <strong class="text-slate-700">Escala</strong>
+      {% if datos.primer_ciclo %}
+        — LA: Logrado con Autonomía · L: Logrado · EP: En Proceso · NL: No Logrado
       {% else %}
-        (3° a 6°): S = Sobresaliente · MB = Muy Bueno · B = Bueno · R = Regular
+        — S: Sobresaliente · MB: Muy Bueno · B: Bueno · R: Regular. Espacios curriculares se califican en escala numérica de 1 a 10; Lectura, Convivencia, Esfuerzo y Respeto en escala cualitativa.
       {% endif %}
     </div>
   </div>
