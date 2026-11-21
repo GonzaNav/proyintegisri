@@ -39,6 +39,7 @@ proyintegisri/
 │   ├── 06_Parte_V_Diagrama_de_Clases.png
 │   ├── 07_Parte_V_DER.png
 │   ├── pantallas/         # Pantallas mockup del Parcial 1
+│   ├── bot_telegram.md    # Documentación del bot de consultas
 │   └── practica_git.md    # Registro de los 10 comandos Git (Parte VII)
 ├── app/                   # Código fuente de la aplicación FastAPI
 │   ├── main.py
@@ -51,9 +52,11 @@ proyintegisri/
 │   ├── templates/         # Plantillas Jinja2
 │   ├── static/            # Recursos estáticos
 │   └── utils/             # Utilidades (escala de notas, auditoría)
+├── bot/                   # Bot de Telegram de consultas sobre la migración
 ├── data/
 │   └── seed.py            # Datos semilla (1°–6° grado, 12 cursos, alumnos)
-├── tests/
+├── tests/                 # Tests con pytest
+├── .env.example           # Plantilla de variables de entorno (token del bot)
 ├── requirements.txt
 ├── LICENSE                # Todos los derechos reservados — Ley 11.723
 └── README.md
@@ -89,6 +92,16 @@ Una vez levantado, abrir [http://127.0.0.1:8000](http://127.0.0.1:8000) en el na
 |---|---|---|
 | `gnaveda@novalido.com` | `admin123` | Directivo |
 
+### Bot de Telegram
+
+```bash
+# 1. Copiar .env.example como .env y completar BOT_KEY con el token de @BotFather
+# 2. Iniciar el bot (queda escuchando hasta Ctrl+C)
+python -m bot
+```
+
+Los tests se ejecutan con `python -m pytest tests/`. El detalle del bot está en [`docs/bot_telegram.md`](./docs/bot_telegram.md).
+
 ## Funcionalidades implementadas
 
 - **Portada pública** con descripción del sistema y marco normativo.
@@ -101,6 +114,7 @@ Una vez levantado, abrir [http://127.0.0.1:8000](http://127.0.0.1:8000) en el na
 - **Administración**: ABM de usuarios y edición de datos institucionales.
 - **Auditoría**: registro automático de login/logout, alta/baja/modificación de usuarios y generación de libretas.
 - **Protección de rutas internas**: todas las vistas autenticadas exigen sesión activa.
+- **Bot de Telegram** ([@libretasPyBot](https://t.me/libretasPyBot)): responde consultas sobre la migración de Laravel a Python (motivos, tecnologías, Moodle, funcionalidades y estado del proyecto) mediante comandos, menú de temas y preguntas en lenguaje libre.
 
 ## Avance por entregables del cursado
 
