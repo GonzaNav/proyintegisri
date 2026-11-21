@@ -38,6 +38,7 @@ proyintegisri/
 │   ├── 05_Parte_IV_Casos_de_Uso.png
 │   ├── 06_Parte_V_Diagrama_de_Clases.png
 │   ├── 07_Parte_V_DER.png
+│   ├── 08_Plan_de_Trabajo_Bot_Telegram.docx / .pdf  # Plan de Trabajo con el bot incorporado
 │   ├── pantallas/         # Pantallas mockup del Parcial 1
 │   ├── bot_telegram.md    # Documentación del bot de consultas
 │   └── practica_git.md    # Registro de los 10 comandos Git (Parte VII)
