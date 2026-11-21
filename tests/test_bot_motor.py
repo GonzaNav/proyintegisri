@@ -113,7 +113,10 @@ def test_ids_y_comandos_unicos():
 @pytest.mark.parametrize("entrada", [e for e in ENTRADAS if e.comando], ids=lambda e: e.comando)
 def test_comandos_validos_para_telegram(entrada):
     assert re.fullmatch(r"[a-z0-9_]{1,32}", entrada.comando)
-    assert entrada.comando not in {"start", "temas", "ayuda", "help"}
+    from bot.handlers import COMANDOS_NEGOCIO
+
+    reservados = {"start", "temas", "ayuda", "help"} | {c for c, _ in COMANDOS_NEGOCIO}
+    assert entrada.comando not in reservados
 
 
 def test_callback_data_dentro_del_limite():

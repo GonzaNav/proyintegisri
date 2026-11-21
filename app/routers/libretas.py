@@ -132,14 +132,16 @@ def construir_datos_libreta(alumno: Alumno, curso: Curso, periodo: str):
             if idx >= trim_completos:
                 valores.append(_vacia())
                 continue
-            if prefijo in ("I", "IJ", "II", "T"):
-                nota = rnd.choice([0, 0, 1, 1, 2, 3])
-                valor = fn(nota, curso.grado) if callable(fn) else str(int(nota))
+            # Se decide por la funcion de calificacion y no por el prefijo: en 2° ciclo
+            # "Integración grupal" usa el prefijo "I", igual que las inasistencias de 1° ciclo.
+            if fn is calificar_convivencia:
+                nota = _nota_simulada(rnd, base=7)
+                valor = fn(nota, curso.grado)
             elif prefijo == "P":
                 nota = rnd.choice([55, 58, 60, 62, 65])
                 valor = str(nota)
             else:
-                nota = _nota_simulada(rnd, base=7)
+                nota = rnd.choice([0, 0, 1, 1, 2, 3])
                 valor = fn(nota, curso.grado)
             valores.append(_celda(valor))
         convivencia.append({"nombre": nombre, "prefijo": prefijo, "trimestres": valores})

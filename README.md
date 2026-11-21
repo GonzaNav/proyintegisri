@@ -96,8 +96,11 @@ Una vez levantado, abrir [http://127.0.0.1:8000](http://127.0.0.1:8000) en el na
 ### Bot de Telegram
 
 ```bash
-# 1. Copiar .env.example como .env y completar BOT_KEY con el token de @BotFather
-# 2. Iniciar el bot (queda escuchando hasta Ctrl+C)
+# 1. Crear un bot con @BotFather en Telegram (/newbot) y copiar el token
+# 2. Copiar .env.example como .env y completar BOT_KEY con ese token
+# 3. Cargar los datos de ejemplo (si no se hizo en el paso 4 de arriba)
+python -m data.seed
+# 4. Iniciar el bot (queda escuchando hasta Ctrl+C) y enviarle /start desde Telegram
 python -m bot
 ```
 
@@ -115,7 +118,10 @@ Los tests se ejecutan con `python -m pytest tests/`. El detalle del bot está en
 - **Administración**: ABM de usuarios y edición de datos institucionales.
 - **Auditoría**: registro automático de login/logout, alta/baja/modificación de usuarios y generación de libretas.
 - **Protección de rutas internas**: todas las vistas autenticadas exigen sesión activa.
-- **Bot de Telegram** ([@libretasPyBot](https://t.me/libretasPyBot)): responde consultas sobre la migración de Laravel a Python (motivos, tecnologías, Moodle, funcionalidades y estado del proyecto) mediante comandos, menú de temas y preguntas en lenguaje libre.
+- **Bot de Telegram** ([@libretasPyBot](https://t.me/libretasPyBot)):
+  - Consultas del sistema con la misma lógica de negocio que la web: cursos, alumnos, libreta de cada alumno por período y conversión de notas a la escala cualitativa (`/cursos`, `/buscar`, `/libreta`, `/convertir`).
+  - Consultas sobre la migración de Laravel a Python (motivos, tecnologías, Moodle, funcionalidades y estado del proyecto).
+  - Se usa con comandos, botones o preguntas en lenguaje libre ("¿qué escala es un 8 en 2° grado?").
 
 ## Avance por entregables del cursado
 

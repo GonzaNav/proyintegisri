@@ -294,14 +294,15 @@ ENTRADAS: list[Entrada] = [
             "• Lectura y Convivencia: 10 → <b>S</b> · 8–9 → <b>MB</b> · 6–7 → <b>B</b> · 1–5 → <b>R</b>\n"
             "• Otras áreas: nota numérica con coma decimal (8,50).\n\n"
             "<b>Casos especiales:</b> sin nota → <b>S/C</b>; inasistencias en 0 → <b>-</b>.\n"
-            "<i>Nota:</i> el original tenía variantes por año (por ejemplo, EPPA en algunos ciclos lectivos)."
+            "<i>Nota:</i> el original tenía variantes por año (por ejemplo, EPPA en algunos ciclos lectivos).\n\n"
+            "Para convertir una nota: <code>/convertir 8 2</code> (nota 8 en 2° grado)."
         ),
     ),
     Entrada(
         id="libretas",
         tema="funcional",
         titulo="Generación de libretas",
-        comando="libretas",
+        comando="generacion",
         palabras_clave={
             "libreta": 3, "boletin": 3, "due$": 3, "informe": 2, "trimestre": 2,
             "periodo": 2, "progresiv": 3, "alumno": 1,
@@ -313,7 +314,8 @@ ENTRADAS: list[Entrada] = [
             "• <b>Llenado progresivo</b>: solo muestra los trimestres ya cursados; "
             "\"Calificación final\" agrega el promedio anual.\n"
             "• Cada generación queda registrada en la auditoría.\n\n"
-            "Pendiente: libreta de curso completo en un único PDF (RF-14)."
+            "Pendiente: libreta de curso completo en un único PDF (RF-14).\n\n"
+            "Para ver la libreta de un alumno desde acá: /cursos o <code>/libreta &lt;legajo&gt;</code>."
         ),
     ),
     Entrada(
@@ -428,7 +430,7 @@ ENTRADAS: list[Entrada] = [
             "• ABM de usuarios y datos institucionales.\n"
             "• Auditoría de acciones.\n"
             "• Protección de rutas internas.\n"
-            "• Este bot de consultas 🙂"
+            "• Este bot: consulta de cursos, alumnos y libretas, y conversión de notas a escala 🙂"
         ),
     ),
     Entrada(
@@ -537,9 +539,11 @@ ENTRADAS: list[Entrada] = [
             "ayudame": 3, "como te uso": 3, "como funcionas": 3,
         },
         respuesta=(
-            "Soy el asistente de consultas de <b>Libretas.py</b>. Respondo sobre la migración del sistema de "
-            "libretas de Laravel a Python: motivos, tecnologías, Moodle, funcionalidades y estado del proyecto.\n\n"
-            "Escribí una pregunta (por ejemplo: <i>¿qué escalas usa 2° grado?</i>) o usá /temas."
+            "Soy el asistente de <b>Libretas.py</b>. Puedo:\n"
+            "• Mostrar cursos, alumnos y la libreta de cada alumno (/cursos, /buscar, /libreta).\n"
+            "• Convertir una nota a la escala de la libreta (/convertir 8 2).\n"
+            "• Responder sobre la migración del sistema de Laravel a Python (/temas).\n\n"
+            "Usá /ayuda para ver todos los comandos."
         ),
     ),
     Entrada(
